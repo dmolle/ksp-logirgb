@@ -13,18 +13,18 @@ namespace KSP_LogiRGB.SceneManagers
     {
         private static readonly KeyCode[] rotation =
         {
-            GameSettings.ROLL_LEFT.primary,
-            GameSettings.ROLL_RIGHT.primary,
-            GameSettings.PITCH_DOWN.primary,
-            GameSettings.PITCH_UP.primary,
-            GameSettings.YAW_LEFT.primary,
-            GameSettings.YAW_RIGHT.primary
+            GameSettings.ROLL_LEFT.primary.code,
+            GameSettings.ROLL_RIGHT.primary.code,
+            GameSettings.PITCH_DOWN.primary.code,
+            GameSettings.PITCH_UP.primary.code,
+            GameSettings.YAW_LEFT.primary.code,
+            GameSettings.YAW_RIGHT.primary.code
         };
 
         private static readonly KeyCode[] timewarp =
         {
-            GameSettings.TIME_WARP_INCREASE.primary,
-            GameSettings.TIME_WARP_DECREASE.primary
+            GameSettings.TIME_WARP_INCREASE.primary.code,
+            GameSettings.TIME_WARP_DECREASE.primary.code
         };
 
         /// <summary>
@@ -136,9 +136,20 @@ namespace KSP_LogiRGB.SceneManagers
         /// </summary>
         private void recalculateResources()
         {
-            var resources = currentVessel.GetActiveResources();
+            var resourcesArray = new string[] { "ElectricCharge", "LiquidFuel", "Oxidizer", "MonoPropellant", "SolidFuel", "Ablator", "XenonGas" };
+            var resources = new List<PartResourceDefinition>(resourcesArray.Length); 
+            foreach (string resource in resourcesArray)
+            {
+                resources.Add(PartResourceLibrary.Instance.GetDefinition(resource));
+            }
 
-            resources.ForEach(res => { showGauge(res.info.name, res.amount, res.maxAmount); });
+            resources.ForEach(res => {
+                double resourceAmount;
+                double resourceMax;
+                currentVessel.GetConnectedResourceTotals(res.id, out resourceAmount, out resourceMax);
+                showGauge(res.name, resourceAmount, resourceMax);
+            });
+
         }
 
         /// <summary>
@@ -219,23 +230,23 @@ namespace KSP_LogiRGB.SceneManagers
             /// Updates all toggleable action group keys
             foreach (var agroup in actionGroups)
             {
-                if (agroup.Key != KSPActionGroup.None)
+                if (agroup.Key != KSPActionGroup.None && agroup.Key != KSPActionGroup.REPLACEWITHDEFAULT)
                 {
                     if (!agroup.Value)
-                        currentColorScheme.SetKeyToColor(Config.Instance.actionGroupConf[agroup.Key].Key.primary,
+                        currentColorScheme.SetKeyToColor(Config.Instance.actionGroupConf[agroup.Key].Key.primary.code,
                             Color.black);
                     else if (currentVessel.ActionGroups[agroup.Key])
-                        currentColorScheme.SetKeyToColor(Config.Instance.actionGroupConf[agroup.Key].Key.primary,
+                        currentColorScheme.SetKeyToColor(Config.Instance.actionGroupConf[agroup.Key].Key.primary.code,
                             Config.Instance.actionGroupConf[agroup.Key].Value.Value);
                     else
-                        currentColorScheme.SetKeyToColor(Config.Instance.actionGroupConf[agroup.Key].Key.primary,
+                        currentColorScheme.SetKeyToColor(Config.Instance.actionGroupConf[agroup.Key].Key.primary.code,
                             Config.Instance.actionGroupConf[agroup.Key].Value.Key);
                 }
             }
 
             /// Colors the map view key
             currentColorScheme.SetKeyToColor(
-                GameSettings.MAP_VIEW_TOGGLE.primary,
+                GameSettings.MAP_VIEW_TOGGLE.primary.code,
                 MapView.MapIsEnabled ? Config.Instance.redGreenToggle.Value : Config.Instance.redGreenToggle.Key
                 );
 
@@ -243,24 +254,24 @@ namespace KSP_LogiRGB.SceneManagers
             if (FlightInputHandler.fetch.precisionMode)
             {
                 currentColorScheme.SetKeysToColor(rotation, Color.yellow);
-                currentColorScheme.SetKeyToColor(GameSettings.PRECISION_CTRL.primary, Color.green);
+                currentColorScheme.SetKeyToColor(GameSettings.PRECISION_CTRL.primary.code, Color.green);
             }
             else
             {
                 currentColorScheme.SetKeysToColor(rotation, Color.white);
-                currentColorScheme.SetKeyToColor(GameSettings.PRECISION_CTRL.primary, Color.red);
+                currentColorScheme.SetKeyToColor(GameSettings.PRECISION_CTRL.primary.code, Color.red);
             }
 
             /// Lights the quicksave button green, if it is enabled, red otherwise
             if (currentVessel.IsClearToSave() == ClearToSaveStatus.CLEAR ||
                 currentVessel.IsClearToSave() == ClearToSaveStatus.NOT_IN_ATMOSPHERE ||
                 currentVessel.IsClearToSave() == ClearToSaveStatus.NOT_UNDER_ACCELERATION)
-                currentColorScheme.SetKeyToColor(GameSettings.QUICKSAVE.primary, Color.green);
+                currentColorScheme.SetKeyToColor(GameSettings.QUICKSAVE.primary.code, Color.green);
             else
-                currentColorScheme.SetKeyToColor(GameSettings.QUICKSAVE.primary, Color.red);
+                currentColorScheme.SetKeyToColor(GameSettings.QUICKSAVE.primary.code, Color.red);
 
             /// Lights up the quickload button
-            currentColorScheme.SetKeyToColor(GameSettings.QUICKLOAD.primary, Color.green);
+            currentColorScheme.SetKeyToColor(GameSettings.QUICKLOAD.primary.code, Color.green);
 
             /// Colors the timewarp buttons red and green for physics and on-rails warp
             if (TimeWarp.WarpMode == TimeWarp.Modes.HIGH)
@@ -272,19 +283,19 @@ namespace KSP_LogiRGB.SceneManagers
             switch (FlightCamera.fetch.mode)
             {
                 case FlightCamera.Modes.AUTO:
-                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary, Color.green);
+                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary.code, Color.green);
                     break;
                 case FlightCamera.Modes.CHASE:
-                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary, Color.blue);
+                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary.code, Color.blue);
                     break;
                 case FlightCamera.Modes.FREE:
-                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary, Color.yellow);
+                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary.code, Color.yellow);
                     break;
                 case FlightCamera.Modes.LOCKED:
-                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary, Color.cyan);
+                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary.code, Color.cyan);
                     break;
                 default:
-                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary, Color.white);
+                    currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary.code, Color.white);
                     break;
             }
         }
@@ -326,39 +337,7 @@ namespace KSP_LogiRGB.SceneManagers
         /// <returns></returns>
         private double calculateDistanceFromGround()
         {
-            var CoM = currentVessel.findWorldCenterOfMass(); //Gets CoM
-            Vector3 up = FlightGlobals.getUpAxis(CoM); //Gets up axis (needed for the raycast)
-            var ASL = FlightGlobals.getAltitudeAtPos(CoM);
-            RaycastHit craft;
-            float trueAlt;
-            float surfaceAlt;
-            float bottomAlt;
-
-            if (Physics.Raycast(CoM, -up, out craft, ASL + 10000f, 1 << 15))
-            {
-                trueAlt = Mathf.Min(ASL, craft.distance); //Smallest value between ASL and distance from ground
-            }
-
-            else
-            {
-                trueAlt = ASL;
-            }
-
-            surfaceAlt = ASL - trueAlt;
-            bottomAlt = trueAlt; //Initiation to be sure the loop doesn't return a false value
-            foreach (var p in currentVessel.parts)
-            {
-                if (p.collider != null) //Makes sure the part actually has a collider to touch ground
-                {
-                    var bottom = p.collider.ClosestPointOnBounds(currentVessel.mainBody.position);
-                    //Gets the bottom point
-                    var partAlt = FlightGlobals.getAltitudeAtPos(bottom) - surfaceAlt; //Gets the looped part alt
-                    bottomAlt = Mathf.Max(0, Mathf.Min(bottomAlt, partAlt));
-                    //Stores the smallest value in all the parts
-                }
-            }
-
-            return bottomAlt;
+            return Mathf.Max(0, (float)currentVessel.radarAltitude);
         }
     }
 }

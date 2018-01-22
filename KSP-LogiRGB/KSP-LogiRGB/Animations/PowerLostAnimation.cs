@@ -59,13 +59,16 @@ namespace KSP_LogiRGB
                 return true;
 
             /// Check if the vessel needs power, and if empty, continue blinking
-            var resource = FlightGlobals.ActiveVessel.GetActiveResources()
-                .Where(res => res.info.name.Equals("ElectricCharge"));
-            if (resource.Count() > 0)
-                return resource.First().amount > 0.0001;
 
-            /// No energy stored on the ship, end the animation.
-            return true;
+            //var resource = FlightGlobals.ActiveVessel.GetActiveResources()
+            //    .Where(res => res.info.name.Equals("ElectricCharge"));
+            var electricChargeId = PartResourceLibrary.Instance.GetDefinition("ElectricCharge").id;
+            double electricCharge;
+            double electricChargeMax;
+            FlightGlobals.ActiveVessel.GetConnectedResourceTotals(electricChargeId, out electricCharge, out electricChargeMax);
+            
+            return electricCharge > 0.0001;
+
         }
     }
 }
