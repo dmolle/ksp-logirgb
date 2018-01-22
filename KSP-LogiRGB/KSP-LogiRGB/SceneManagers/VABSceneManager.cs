@@ -45,8 +45,8 @@ namespace KSP_LogiRGB.SceneManagers
         {
             currentColorScheme.SetKeysToColor(new[]
             {
-                GameSettings.Editor_modePlace.primary, GameSettings.Editor_modeOffset.primary,
-                GameSettings.Editor_modeRotate.primary, GameSettings.Editor_modeRoot.primary
+                GameSettings.Editor_modePlace.primary.code, GameSettings.Editor_modeOffset.primary.code,
+                GameSettings.Editor_modeRotate.primary.code, GameSettings.Editor_modeRoot.primary.code
             }, Color.white);
 
             var state = EditorLogic.fetch.EditorConstructionMode;
@@ -54,16 +54,16 @@ namespace KSP_LogiRGB.SceneManagers
             switch (state)
             {
                 case ConstructionMode.Place:
-                    currentColorScheme.SetKeyToColor(GameSettings.Editor_modePlace.primary, Color.blue);
+                    currentColorScheme.SetKeyToColor(GameSettings.Editor_modePlace.primary.code, Color.blue);
                     break;
                 case ConstructionMode.Move:
-                    currentColorScheme.SetKeyToColor(GameSettings.Editor_modeOffset.primary, Color.blue);
+                    currentColorScheme.SetKeyToColor(GameSettings.Editor_modeOffset.primary.code, Color.blue);
                     break;
                 case ConstructionMode.Rotate:
-                    currentColorScheme.SetKeyToColor(GameSettings.Editor_modeRotate.primary, Color.blue);
+                    currentColorScheme.SetKeyToColor(GameSettings.Editor_modeRotate.primary.code, Color.blue);
                     break;
                 case ConstructionMode.Root:
-                    currentColorScheme.SetKeyToColor(GameSettings.Editor_modeRoot.primary, Color.blue);
+                    currentColorScheme.SetKeyToColor(GameSettings.Editor_modeRoot.primary.code, Color.blue);
                     break;
             }
         }
@@ -74,21 +74,21 @@ namespace KSP_LogiRGB.SceneManagers
         private void updateToggleables()
         {
             currentColorScheme.SetKeysToColor(
-                new[] {GameSettings.Editor_toggleSymMode.primary, GameSettings.Editor_toggleAngleSnap.primary},
+                new[] {GameSettings.Editor_toggleSymMode.primary.code, GameSettings.Editor_toggleAngleSnap.primary.code},
                 Color.red);
 
             if (EditorLogic.fetch.symmetryMode > 0)
             {
-                currentColorScheme.SetKeyToColor(GameSettings.Editor_toggleSymMode.primary, Color.green);
+                currentColorScheme.SetKeyToColor(GameSettings.Editor_toggleSymMode.primary.code, Color.green);
             }
 
             if (EditorLogic.fetch.symmetryMethod == SymmetryMethod.Mirror)
-                currentColorScheme.SetKeyToColor(GameSettings.Editor_toggleSymMethod.primary, Color.blue);
+                currentColorScheme.SetKeyToColor(GameSettings.Editor_toggleSymMethod.primary.code, Color.blue);
             else if (EditorLogic.fetch.symmetryMethod == SymmetryMethod.Radial)
-                currentColorScheme.SetKeyToColor(GameSettings.Editor_toggleSymMethod.primary, Color.green);
+                currentColorScheme.SetKeyToColor(GameSettings.Editor_toggleSymMethod.primary.code, Color.green);
 
             if (GameSettings.VAB_USE_ANGLE_SNAP)
-                currentColorScheme.SetKeyToColor(GameSettings.Editor_toggleAngleSnap.primary, Color.green);
+                currentColorScheme.SetKeyToColor(GameSettings.Editor_toggleAngleSnap.primary.code, Color.green);
         }
 
         /// <summary>
