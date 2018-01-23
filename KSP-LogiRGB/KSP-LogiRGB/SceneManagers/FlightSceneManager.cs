@@ -137,13 +137,14 @@ namespace KSP_LogiRGB.SceneManagers
         private void recalculateResources()
         {
             var resourcesArray = new string[] { "ElectricCharge", "LiquidFuel", "Oxidizer", "MonoPropellant", "SolidFuel", "Ablator", "XenonGas" };
-            var resources = new List<PartResourceDefinition>(resourcesArray.Length); 
+            var resources = new List<PartResourceDefinition>(resourcesArray.Length);
             foreach (string resource in resourcesArray)
             {
                 resources.Add(PartResourceLibrary.Instance.GetDefinition(resource));
             }
 
-            resources.ForEach(res => {
+            resources.ForEach(res =>
+            {
                 double resourceAmount;
                 double resourceMax;
                 currentVessel.GetConnectedResourceTotals(res.id, out resourceAmount, out resourceMax);
@@ -163,12 +164,12 @@ namespace KSP_LogiRGB.SceneManagers
             Func<Color, int, Color> partialColor = (original, third) =>
             {
                 var newColor = new Color(original.r, original.g, original.b, original.a);
-                var ceiling = maxAmount/3*(third + 1);
-                var floor = maxAmount/3*third;
+                var ceiling = maxAmount / 3 * (third + 1);
+                var floor = maxAmount / 3 * third;
 
                 if (amount <= ceiling)
                 {
-                    var factor = (float) ((amount - floor)/(ceiling - floor));
+                    var factor = (float)((amount - floor) / (ceiling - floor));
                     newColor.r *= factor;
                     newColor.g *= factor;
                     newColor.b *= factor;
@@ -189,32 +190,32 @@ namespace KSP_LogiRGB.SceneManagers
             switch (resource)
             {
                 case "ElectricCharge":
-                    KeyCode[] electric = {KeyCode.Print, KeyCode.ScrollLock, KeyCode.Pause};
+                    KeyCode[] electric = { KeyCode.Print, KeyCode.ScrollLock, KeyCode.Pause };
                     displayFuel(electric, Color.blue);
                     break;
                 case "LiquidFuel":
-                    KeyCode[] liquid = {KeyCode.Numlock, KeyCode.KeypadDivide, KeyCode.KeypadMultiply};
+                    KeyCode[] liquid = { KeyCode.Numlock, KeyCode.KeypadDivide, KeyCode.KeypadMultiply };
                     displayFuel(liquid, Color.green);
                     break;
                 case "Oxidizer":
-                    KeyCode[] oxidizer = {KeyCode.Keypad7, KeyCode.Keypad8, KeyCode.Keypad9};
+                    KeyCode[] oxidizer = { KeyCode.Keypad7, KeyCode.Keypad8, KeyCode.Keypad9 };
                     displayFuel(oxidizer, Color.cyan);
                     break;
                 case "MonoPropellant":
                 case "EVAFuel":
-                    KeyCode[] monoprop = {KeyCode.Keypad4, KeyCode.Keypad5, KeyCode.Keypad6};
+                    KeyCode[] monoprop = { KeyCode.Keypad4, KeyCode.Keypad5, KeyCode.Keypad6 };
                     displayFuel(monoprop, Color.yellow);
                     break;
                 case "SolidFuel":
-                    KeyCode[] solid = {KeyCode.Keypad1, KeyCode.Keypad2, KeyCode.Keypad3};
+                    KeyCode[] solid = { KeyCode.Keypad1, KeyCode.Keypad2, KeyCode.Keypad3 };
                     displayFuel(solid, Color.magenta);
                     break;
                 case "Ablator":
-                    KeyCode[] ablator = {KeyCode.Delete, KeyCode.End, KeyCode.PageDown};
+                    KeyCode[] ablator = { KeyCode.Delete, KeyCode.End, KeyCode.PageDown };
                     displayFuel(ablator, new Color(244, 259, 0, 255));
                     break;
                 case "XenonGas":
-                    KeyCode[] xenon = {KeyCode.Insert, KeyCode.Home, KeyCode.PageUp};
+                    KeyCode[] xenon = { KeyCode.Insert, KeyCode.Home, KeyCode.PageUp };
                     displayFuel(xenon, Color.gray);
                     break;
                 default:
@@ -298,6 +299,25 @@ namespace KSP_LogiRGB.SceneManagers
                     currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary.code, Color.white);
                     break;
             }
+
+            /// Only show RCS Key if enabled
+            KeyCode[] rcskeys =
+            {
+                GameSettings.TRANSLATE_BACK.primary.code,
+                GameSettings.TRANSLATE_FWD.primary.code,
+                GameSettings.TRANSLATE_LEFT.primary.code,
+                GameSettings.TRANSLATE_RIGHT.primary.code,
+                GameSettings.TRANSLATE_UP.primary.code,
+                GameSettings.TRANSLATE_DOWN.primary.code
+            };
+            if (currentVessel.ActionGroups[KSPActionGroup.RCS])
+            {
+                currentColorScheme.SetKeysToColor(rcskeys, Color.yellow);
+            }
+            else
+            {
+                currentColorScheme.SetKeysToColor(rcskeys, Color.black);
+            }
         }
 
         /// <summary>
@@ -322,7 +342,7 @@ namespace KSP_LogiRGB.SceneManagers
                     currentColorScheme.SetKeyToColor(heightScaleKeys[i], newColor);
                 else if (vesselHeight > floor)
                 {
-                    var factor = (float) ((vesselHeight - floor)/(ceiling - floor));
+                    var factor = (float)((vesselHeight - floor) / (ceiling - floor));
                     newColor.r *= factor;
                     newColor.g *= factor;
                     newColor.b *= factor;

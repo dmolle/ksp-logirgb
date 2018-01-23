@@ -12,16 +12,7 @@ namespace KSP_LogiRGB.ColorSchemes
         /// </summary>
         public FlightScheme()
         {
-            KeyCode[] yellowkeys =
-            {
-                GameSettings.TRANSLATE_BACK.primary.code,
-                GameSettings.TRANSLATE_FWD.primary.code,
-                GameSettings.TRANSLATE_LEFT.primary.code,
-                GameSettings.TRANSLATE_RIGHT.primary.code,
-                GameSettings.TRANSLATE_UP.primary.code,
-                GameSettings.TRANSLATE_DOWN.primary.code
-            };
-            SetKeysToColor(yellowkeys, Color.yellow);
+            
 
             KeyCode[] redkeys =
             {
