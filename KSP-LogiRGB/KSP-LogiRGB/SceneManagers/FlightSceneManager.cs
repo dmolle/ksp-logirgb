@@ -21,6 +21,16 @@ namespace KSP_LogiRGB.SceneManagers
             GameSettings.YAW_RIGHT.primary.code
         };
 
+        private static readonly KeyCode[] rcskeys =
+        {
+                GameSettings.TRANSLATE_BACK.primary.code,
+                GameSettings.TRANSLATE_FWD.primary.code,
+                GameSettings.TRANSLATE_LEFT.primary.code,
+                GameSettings.TRANSLATE_RIGHT.primary.code,
+                GameSettings.TRANSLATE_UP.primary.code,
+                GameSettings.TRANSLATE_DOWN.primary.code
+        };
+
         private static readonly KeyCode[] timewarp =
         {
             GameSettings.TIME_WARP_INCREASE.primary.code,
@@ -136,7 +146,7 @@ namespace KSP_LogiRGB.SceneManagers
         /// </summary>
         private void recalculateResources()
         {
-            
+
             foreach (PartResourceDefinition res in PartResourceLibrary.Instance.resourceDefinitions)
             {
                 double resourceAmount;
@@ -246,18 +256,6 @@ namespace KSP_LogiRGB.SceneManagers
                 MapView.MapIsEnabled ? Config.Instance.redGreenToggle.Value : Config.Instance.redGreenToggle.Key
                 );
 
-            /// Lights steering buttons differently if precision mode is on
-            if (FlightInputHandler.fetch.precisionMode)
-            {
-                currentColorScheme.SetKeysToColor(rotation, Color.yellow);
-                currentColorScheme.SetKeyToColor(GameSettings.PRECISION_CTRL.primary.code, Color.green);
-            }
-            else
-            {
-                currentColorScheme.SetKeysToColor(rotation, Color.white);
-                currentColorScheme.SetKeyToColor(GameSettings.PRECISION_CTRL.primary.code, Color.red);
-            }
-
             /// Lights the quicksave button green, if it is enabled, red otherwise
             if (currentVessel.IsClearToSave() == ClearToSaveStatus.CLEAR ||
                 currentVessel.IsClearToSave() == ClearToSaveStatus.NOT_IN_ATMOSPHERE ||
@@ -294,25 +292,50 @@ namespace KSP_LogiRGB.SceneManagers
                     currentColorScheme.SetKeyToColor(GameSettings.CAMERA_NEXT.primary.code, Color.white);
                     break;
             }
+            /// Control Keys
+            if (currentVessel.CurrentControlLevel == Vessel.ControlLevel.NONE)
+            {
+                currentColorScheme.SetKeysToColor(rotation, Color.black);
+                currentColorScheme.SetKeysToColor(rcskeys, Color.black);
+                currentColorScheme.SetKeysToColor(new KeyCode[] { GameSettings.THROTTLE_FULL.primary.code, GameSettings.THROTTLE_CUTOFF.primary.code, GameSettings.THROTTLE_UP.primary.code, GameSettings.THROTTLE_DOWN.primary.code }, Color.black);
+                currentColorScheme.SetKeyToColor(GameSettings.PRECISION_CTRL.primary.code, Color.black);
 
-            /// Only show RCS Key if enabled
-            KeyCode[] rcskeys =
+            }
+            else if (currentVessel.CurrentControlLevel == Vessel.ControlLevel.PARTIAL_UNMANNED)
             {
-                GameSettings.TRANSLATE_BACK.primary.code,
-                GameSettings.TRANSLATE_FWD.primary.code,
-                GameSettings.TRANSLATE_LEFT.primary.code,
-                GameSettings.TRANSLATE_RIGHT.primary.code,
-                GameSettings.TRANSLATE_UP.primary.code,
-                GameSettings.TRANSLATE_DOWN.primary.code
-            };
-            if (currentVessel.ActionGroups[KSPActionGroup.RCS])
-            {
-                currentColorScheme.SetKeysToColor(rcskeys, Color.yellow);
+                currentColorScheme.SetKeysToColor(rotation, Color.black);
+                currentColorScheme.SetKeysToColor(rcskeys, Color.black);
+                currentColorScheme.SetKeysToColor( new KeyCode[] { GameSettings.THROTTLE_UP.primary.code, GameSettings.THROTTLE_DOWN.primary.code}, Color.black);
+
             }
             else
             {
-                currentColorScheme.SetKeysToColor(rcskeys, Color.black);
+                //Vessel.ControlLevel.PARTIAL_MANNED || Vessel.ControlLevel.FULL
+
+                /// Lights steering buttons differently if precision mode is on
+                if (FlightInputHandler.fetch.precisionMode)
+                {
+                    currentColorScheme.SetKeysToColor(rotation, Color.yellow);
+                    currentColorScheme.SetKeyToColor(GameSettings.PRECISION_CTRL.primary.code, Color.green);
+                }
+                else
+                {
+                    currentColorScheme.SetKeysToColor(rotation, Color.white);
+                    currentColorScheme.SetKeyToColor(GameSettings.PRECISION_CTRL.primary.code, Color.red);
+                }
+
+                /// Only show RCS Key if enabled
+               
+                if (currentVessel.ActionGroups[KSPActionGroup.RCS])
+                {
+                    currentColorScheme.SetKeysToColor(rcskeys, Color.yellow);
+                }
+                else
+                {
+                    currentColorScheme.SetKeysToColor(rcskeys, Color.black);
+                }
             }
+
         }
 
         /// <summary>
