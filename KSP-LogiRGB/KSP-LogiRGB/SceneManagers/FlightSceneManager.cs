@@ -136,20 +136,15 @@ namespace KSP_LogiRGB.SceneManagers
         /// </summary>
         private void recalculateResources()
         {
-            var resourcesArray = new string[] { "ElectricCharge", "LiquidFuel", "Oxidizer", "MonoPropellant", "SolidFuel", "Ablator", "XenonGas" };
-            var resources = new List<PartResourceDefinition>(resourcesArray.Length);
-            foreach (string resource in resourcesArray)
-            {
-                resources.Add(PartResourceLibrary.Instance.GetDefinition(resource));
-            }
-
-            resources.ForEach(res =>
+            
+            foreach (PartResourceDefinition res in PartResourceLibrary.Instance.resourceDefinitions)
             {
                 double resourceAmount;
                 double resourceMax;
                 currentVessel.GetConnectedResourceTotals(res.id, out resourceAmount, out resourceMax);
                 showGauge(res.name, resourceAmount, resourceMax);
-            });
+            }
+
 
         }
 
